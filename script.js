@@ -1,3 +1,5 @@
+
+
 (function () {
 
     var canvas = document.createElement('canvas')
@@ -10,13 +12,11 @@
 
     particles = [];
     properties = {
-
-        particleColor: 'rgba(34, 11, 181, 1);',
-        particleRadius: 5,
-        particleCount: 100,
-        ParticleMaxVelocity: 0.7,
-        lineLength: 160,
-        particleLife: 10
+        particleRadius: 10,
+        particleCount: 60,
+        ParticleMaxVelocity: 2.2,
+        lineLength: 150,
+        particleLife: 6
     }
 
     document.querySelector('body').appendChild(canvas)
@@ -52,20 +52,32 @@
             ctx.closePath();
             ctx.fillStyle = properties.particleColor;
             ctx.fill();
+
         }
 
+
+        redrawCalculateLife() {
+            if (this.life < 1) {
+                this.x = Math.random() * w
+                this.y = Math.random() * h
+                //создание (скорость) перемещения частиц
+                this.velocityX = Math.random() * (properties.ParticleMaxVelocity * 2) - properties.ParticleMaxVelocity;
+                this.velocityY = Math.random() * (properties.ParticleMaxVelocity * 2) - properties.ParticleMaxVelocity;
+                this.life = Math.random() * properties.particleLife * 60;
+            }
+            this.life--
+        }
     }
 
     //цвет заднего фона
     function redrawBackground() {
-        ctx.fillStyle = 'rgba(48, 22, 37, 1)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 1);';
         ctx.fillRect(0, 0, w, h)
     }
 
     //Рисуем линии
     function drawLines() {
         var x1, y1, x2, y2, length, opacity
-
         for (let i in particles) {
             for (let j in particles) {
                 x1 = particles[i].x
@@ -77,7 +89,7 @@
                 if (length < properties.lineLength) {
                     opacity = 1 - length / properties.lineLength
                     //Ширина,цвет
-                    ctx.lineWidth = '0.5'
+                    ctx.lineWidth = '0.1'
                     ctx.strokeStyle = 'rgba(2, 173, 151,1)'
                     ctx.beginPath()
                     ctx.moveTo(x1, y1)
@@ -90,8 +102,15 @@
     }
 
 
+    if (window.matchMedia("(max-width: 400px)").matches) {
+        properties.particleCount = 30
+    } else {
+        properties.particleCount = 100
+    }
+
     function reDrawParticles() {
         for (let i in particles) {
+            particles[i].redrawCalculateLife()
             particles[i].position()
             particles[i].reDraw()
         }
@@ -115,5 +134,5 @@
 
 }())
 
-
+// //Done
 
